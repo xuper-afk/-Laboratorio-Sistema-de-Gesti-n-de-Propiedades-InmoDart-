@@ -1,0 +1,73 @@
+// Laboratorio: Sistema de Gestión de Propiedades (InmoDart)
+
+// 1. Definición de la sealed class
+sealed class Inmueble {}
+
+// Clase Casa
+class Casa extends Inmueble {
+  final int habitaciones;
+  Casa(this.habitaciones);
+}
+
+// Clase Apartamento
+class Apartamento extends Inmueble {
+  final int piso;
+  final bool ascensor;
+  Apartamento(this.piso, this.ascensor);
+}
+
+// 2. Algoritmo de procesamiento con Pattern Matching y Destructuring
+double calcularPrecioFinal(
+  Inmueble inmueble,
+  ({double precioBase, String ubicacion}) datos,
+) {
+  double precioFinal = datos.precioBase;
+
+  switch (inmueble) {
+    // Descuento para casas con 4 o más habitaciones
+    case Casa(habitaciones: var h) when h >= 4:
+      precioFinal -= 5000;
+
+    // Descuento para apartamentos en piso > 5 con ascensor
+    case Apartamento(piso: var p, ascensor: true) when p > 5:
+      precioFinal -= 3000;
+
+    // Reto: Apartamento en piso > 5 sin ascensor
+    case Apartamento(piso: var p, ascensor: false) when p > 5:
+      precioFinal -= 3000;
+      precioFinal -= 2000;
+
+    // Caso por defecto
+    default:
+      break;
+  }
+
+  return precioFinal;
+}
+
+// 3. Función principal
+void main() {
+  final propiedades = [
+    (
+      inmueble: Apartamento(7, false),
+      datos: (precioBase: 120000.0, ubicacion: "Cusco")
+    ),
+    (
+      inmueble: Apartamento(6, true),
+      datos: (precioBase: 110000.0, ubicacion: "Arequipa")
+    ),
+    (
+      inmueble: Casa(4),
+      datos: (precioBase: 150000.0, ubicacion: "Lima")
+    ),
+  ];
+
+  for (var propiedad in propiedades) {
+    final precioFinal = calcularPrecioFinal(
+      propiedad.inmueble,
+      propiedad.datos,
+    );
+
+    print("Ubicación: ${propiedad.datos.ubicacion}, Precio final: \$${precioFinal}");
+  }
+}
